@@ -117,35 +117,27 @@ def DeterminePosition(filted):
 def GoStraight():
     lm.setVelocity(1.0 * MAX_SPEED)
     rm.setVelocity(1.0 * MAX_SPEED)
-        #return 1.0, 1.0
-    #return 1.0, 1.0
     return
         
 def TurnLeft():
     #if pos == :
     lm.setVelocity(0.5 * MAX_SPEED)
     rm.setVelocity(1.0 * MAX_SPEED)
-        
+    return  
 def TurnRight():
     #if pos == :
     lm.setVelocity(1.0 * MAX_SPEED)
     rm.setVelocity(0.5 * MAX_SPEED)
-
+    return
 
 def TurnLeftVuong():
-    lm.setVelocity(0 * MAX_SPEED)
-    rm.setVelocity(0 * MAX_SPEED)
-    
     lm.setVelocity(1 * MAX_SPEED)
-    rm.setVelocity(0 * MAX_SPEED)
-    
+    rm.setVelocity(0.2 * MAX_SPEED)
+    return
 def TurnRightVuong():
-    lm.setVelocity(0 * MAX_SPEED)
-    rm.setVelocity(0 * MAX_SPEED)
-    
-    lm.setVelocity(0 * MAX_SPEED)
+    lm.setVelocity(0.2 * MAX_SPEED)
     rm.setVelocity(1 * MAX_SPEED)
-    
+    return
 lastPos = 0  
 # Main loop:
 # Chương trình sẽ được lặp lại vô tận 
