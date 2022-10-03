@@ -74,7 +74,7 @@ FULL_SIGNAL  = 3
 BLANK_SIGNAL = -3
 
 # MAX_SPEED <= 1000
-MAX_SPEED = 10
+MAX_SPEED = 30
 threshold = [330, 330, 330, 330, 330, 330, 330, 330]
 preFilted = 0b00000000
 
@@ -97,19 +97,21 @@ def ReadSensors():
 
 #xác định độ lệch của xe từ việc đọc giá trị cảm biến
 def DeterminePosition(filted):
-    if (filted == 0b11100111 or filted == 0b11111111):
+    if (filted == 0b11100111 or filted == 0b11101111 or filted == 0b11110111):
         return MID
-    elif (filted == 0b10011111 or filted == 0b11001111 or filted == 0b11011111 or filted == 0b10111111 or filted == 0b11101111):
+    elif (filted == 0b10011111 or filted == 0b11001111 or filted == 0b11011111 or filted == 0b10111111 or filted == 0b11101111
+    or filted == 0b01111111 or filted == 0b00111111 ):
         return LEFT
-    elif (filted == 0b11111001 or filted == 0b11110011 or filted == 0b11111101 or filted == 0b11111011 or filted == 0b11110111):
+    elif (filted == 0b11111001 or filted == 0b11110011 or filted == 0b11111101 or filted == 0b11111011 or filted == 0b11110111
+    or filted == 0b11111110 or filted == 0b11111100 ):
         return RIGHT
-    #elif filted == 0b11111111:
-        #return FULL_SIGNAL
-    elif filted == 0b00000000:
+    elif filted == 0b11111111:
         return BLANK_SIGNAL
-    elif (filted == 0b10000111 or filted == 0b00000111 or filted == 0b00000011 or filted == 0b11000111 or filted == 0b00000001 or filted == 0b00001111 or filted == 0b00011111 or filted == 0b00111111 or filted == 0b00000001):
+    elif filted == 0b00000000:
+        return FULL_SIGNAL
+    elif (filted == 0b10000111 or filted == 0b00000111 or filted == 0b00001111 or filted == 0b00011111 or filted == 0b11000111):
         return LEFT_VUONG
-    elif (filted == 0b11100001 or filted == 0b11100000 or filted == 0b11000000 or filted == 0b11100011):
+    elif (filted == 0b11100001 or filted == 0b11100000 or filted == 0b11110000 or filted == 0b11111000 or filted == 0b11100011):
         return RIGHT_VUONG
     return MID
        
@@ -131,34 +133,34 @@ def TurnRight():
     return
 
 def TurnLeftVuong():
-    fil = ReadSensors()
-    print(fil)
-    while fil != 0b11100111 :
-        print('2')
-        lm.setVelocity(0.1 * MAX_SPEED)
-        rm.setVelocity(1 * MAX_SPEED)
-    
+    for i in range(52):
+        a = robot.step(timestep)
+        lm.setVelocity(0.3 * MAX_SPEED)
+        rm.setVelocity(1.3 * MAX_SPEED)
+        
     return
 def TurnRightVuong():
-    fil = ReadSensors()
-    print(fil)
-    while  fil != 0b11100111 :
-        print('2')
-        lm.setVelocity(1 * MAX_SPEED)
-        rm.setVelocity(0.1 * MAX_SPEED)
-    
+    for i in range(52):
+        a = robot.step(timestep)
+        lm.setVelocity(1.3 * MAX_SPEED)
+        rm.setVelocity(0.3 * MAX_SPEED)
+        
     return
 def NgaTuLeft():
-    while ReadSensors() != 0b11100111 :
-        print('fff')
-        lm.setVelocity(0.4 * MAX_SPEED)
+    print('T_L')
+    for i in range(160):
+        
+        a = robot.step(timestep)
+        lm.setVelocity(0.67 * MAX_SPEED)
         rm.setVelocity(1 * MAX_SPEED)
     return
 def NgaTuRight():
-    while ReadSensors() != 0b11100111 :
-        print('fff')
+    print('T_R')
+    for i in range(160):
+     
+        a = robot.step(timestep)
         lm.setVelocity(1 * MAX_SPEED)
-        rm.setVelocity(0.4 * MAX_SPEED)
+        rm.setVelocity(0.67 * MAX_SPEED)
 
     return
 lastPos = 0  
@@ -175,32 +177,36 @@ while robot.step(timestep) != -1:
     print(pos )
     print('lastpos' + str(lastPos))
     #Gọi các hàm điều khiển
-    if pos == MID:
+    if (pos == MID and lastPos == MID):
         GoStraight()
-    elif pos == LEFT:
+    elif (pos == LEFT and lastPos == MID) or (pos == LEFT and lastPos == LEFT) :
         TurnLeft()
-    elif pos == RIGHT:
+    elif (pos == RIGHT and lastPos == MID) or (pos == RIGHT and lastPos == RIGHT):
         TurnRight() 
-   # elif ((pos == MID and lastPos == LEFT_VUONG) or (pos == LEFT and lastPos == LEFT_VUONG) ) :
-   #    print("NTL---------------------")
-   #    NgaTuLeft();
-   # elif ((pos == MID and lastPos ==RIGHT_VUONG) or (pos == RIGHT and lastPos == RIGHT_VUONG)) :
-   #    print("NTR-------------------------")
-   #    NgaTuRight();
-    if pos == LEFT_VUONG:
+        
+        
+    if ((pos == BLANK_SIGNAL and lastPos ==LEFT_VUONG) or (pos == LEFT and lastPos ==LEFT_VUONG)) :
        print('LV')
-       TurnLeftVuong()   
-    if pos == RIGHT_VUONG:
+       TurnLeftVuong()     
+    elif ((pos == BLANK_SIGNAL and lastPos ==RIGHT_VUONG) or (pos == RIGHT and lastPos ==RIGHT_VUONG) ):
       print('RV')
       TurnRightVuong() 
+      
+      
+    elif ((pos == MID and lastPos == LEFT_VUONG)) :
+       print("NTL---------------------")
+       NgaTuLeft();
+    elif ((pos == MID and lastPos ==RIGHT_VUONG)) :
+       print("NTR-------------------------")
+       NgaTuRight();
     
+     
     elif pos == BLANK_SIGNAL:
         GoStraight()
     
   
     
-       
-       
+      
     preFilted = filted
     lastPos = pos
     
